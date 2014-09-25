@@ -31,11 +31,16 @@ angular.module('bunnyMarkApp')
         var renderer;
         var previous;
         var stats;
+        
+        var bunnyTexture = THREE.ImageUtils.loadTexture( 'assets/images/wabbit_alpha.png' );
+        var bunnyMaterial = new THREE.SpriteMaterial( { map: bunnyTexture, useScreenCoordinates: false } );
+        var bunny = new THREE.Sprite( bunnyMaterial );
  
 
         init();
         animate();
-        addCube();
+        //addCube();
+        addBunny();
  
         function init() {
           camera = new THREE.PerspectiveCamera(50, width / height, 1, 2000);
@@ -97,6 +102,12 @@ angular.module('bunnyMarkApp')
           var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
           var cube = new THREE.Mesh( geometry, material );
           scene.add( cube ); 
+        }
+        
+        function addBunny() {
+          
+          bunny.scale.set( 0.2, 0.2, 0.2 ); // imageWidth, imageHeight
+          scene.add( bunny );
         }
         
       }
