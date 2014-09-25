@@ -56,8 +56,12 @@ angular.module('bunnyMarkApp')
 
           // Events
           $window.addEventListener('resize', onWindowResize, false);
+          
+          element.on('mousedown', onMouseDown);
+          element.on('mouseup', onMouseUp);
         }
- 
+        
+        //events
         function onWindowResize(event) {
           
           var w = element.width();
@@ -67,6 +71,16 @@ angular.module('bunnyMarkApp')
           camera.aspect = w / h;
           camera.updateProjectionMatrix();
         }
+        
+        function onMouseDown(event) {
+          
+          console.log("mouse down");
+        }
+        
+        function onMouseUp(event) {
+          
+          console.log("mouse up");
+        };
  
         function animate() {
             requestAnimationFrame(animate);
