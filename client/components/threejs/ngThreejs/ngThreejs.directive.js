@@ -1,24 +1,38 @@
 'use strict';
 
 angular.module('bunnyMarkApp')
-  .directive('ngThreejs', function ($window) {
+  .directive('ngThreejs', function ($window, $interval) {
     return {
       template: '<div></div>',
       restrict: 'E',
       link: function (scope, element, attrs) {
         
         element.css('position', 'absolute')
-        /*
-        element.css('width', '100%');
-        element.css('height', '100%');
-        element.css('background', '#b2b2b2');
-        element.css('display', 'block');
-        */
         element.css('top','0');
         element.css('bottom','0');
         element.css('left','0');
         element.css('right','0');
+        element.css('background', '#b2b2b2');
         
+        var BunnyFactory = function() {
+          
+          var bunnyTexture = THREE.ImageUtils.loadTexture( 'assets/images/wabbit_alpha.png' );
+          var bunnyMaterial = new THREE.SpriteMaterial( { map: bunnyTexture, useScreenCoordinates: false } );
+          
+          this.makeBunny = function() {
+            
+            var bunny = new THREE.Sprite( bunnyMaterial );
+            bunny.name = 'bunny';
+            bunny.userData.goingUp = false;
+            bunny.userData.goingLeft = false;
+            bunny.name = 'bunny';
+            bunny.scale.set( 0.2, 0.2, 0.2 );
+                    
+            return bunny;
+          }
+
+        }
+                
         /* parameters */
         var params = {};
         params.debug = attrs.debugMode || 'false';
@@ -32,15 +46,14 @@ angular.module('bunnyMarkApp')
         var previous;
         var stats;
         
-        var bunnyTexture = THREE.ImageUtils.loadTexture( 'assets/images/wabbit_alpha.png' );
-        var bunnyMaterial = new THREE.SpriteMaterial( { map: bunnyTexture, useScreenCoordinates: false } );
-        var bunny = new THREE.Sprite( bunnyMaterial );
- 
-
+        var bunnyFactory = new BunnyFactory();
+        var bunnies = [];
+        var bunnyInterval;
+                 
+        
         init();
         animate();
-        //addCube();
-        addBunny();
+        placeRandomBunnies(400);
  
         function init() {
           camera = new THREE.PerspectiveCamera(50, width / height, 1, 2000);
@@ -79,12 +92,18 @@ angular.module('bunnyMarkApp')
         
         function onMouseDown(event) {
           
-          console.log("mouse down");
+          bunnyInterval = $interval( function(){
+            addBunnyToScene();
+            console.log('Bunny added');
+            console.log('There are now: ' + bunnies.length + ' bunnies on screen');
+          },30);
         }
         
         function onMouseUp(event) {
           
-          console.log("mouse up");
+          if(bunnyInterval) {
+            $interval.cancel(bunnyInterval);
+          }
         };
  
         function animate() {
@@ -94,6 +113,7 @@ angular.module('bunnyMarkApp')
  
         function render() {
           stats.update();
+          bunnyUpdate();
           renderer.render(scene, camera);
         }
         
@@ -104,11 +124,68 @@ angular.module('bunnyMarkApp')
           scene.add( cube ); 
         }
         
-        function addBunny() {
-          
-          bunny.scale.set( 0.2, 0.2, 0.2 ); // imageWidth, imageHeight
-          scene.add( bunny );
+        function getRandomInt(min, max) {
+          return Math.round(Math.random() * (max - min + 1)) + min;
         }
+        
+        function addBunnyToScene() {
+          
+          var b = bunnyFactory.makeBunny();
+          b.position.set(getRandomInt(-10,10),getRandomInt(-10,10),0);
+          bunnies.push(b);
+          scene.add( b );
+        }
+        
+        function placeRandomBunnies(amount) {
+          
+          for(var i = 0; i < amount; i++) {
+            var b = bunnyFactory.makeBunny();
+            b.position.set(getRandomInt(-10,10),getRandomInt(-10,10),0);
+            bunnies.push(b);
+            scene.add( b );
+          }
+        }
+        
+        function bunnyUpdate() {
+        
+          for(var i = 0; i < bunnies.length; i++) {
+            
+            var b = bunnies[i];
+            
+            if(b.userData.goingUp) {
+              
+              b.position.y += 0.05;
+              
+            } else {
+              b.position.y -= 0.05;
+            }
+            
+            if(b.userData.goingLeft) {
+              
+              b.position.x -= 0.025;
+              
+            } else {
+              b.position.x += 0.025;
+            }
+            
+            //check bounds
+            if(b.position.y > 3 ) {
+              b.userData.goingUp = false;
+            }
+            if(b.position.y < -3) {
+              b.userData.goingUp = true;
+            }
+            
+            if(b.position.x > 4 ) {
+              b.userData.goingLeft = true;
+            }
+            if(b.position.x < -4) {
+              b.userData.goingLeft = false;
+            }
+          }
+        }
+        
+        
         
       }
     };
