@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bunnyMarkApp')
+angular.module('SpriteMarkApp')
   .directive('ngThreejs', function ($window, $interval) {
     return {
       template: '<div></div>',
@@ -105,8 +105,6 @@ angular.module('bunnyMarkApp')
           
           bunnyInterval = $interval( function(){
             addBunnyToScene();
-            console.log('Bunny added');
-            console.log('There are now: ' + bunnies.length + ' bunnies on screen');
           },30);
         }
         

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bunnyMarkApp', [
+angular.module('SpriteMarkApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',

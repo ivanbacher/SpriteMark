@@ -3,7 +3,7 @@
 describe('Directive: ngThreejs', function () {
 
   // load the directive's module
-  beforeEach(module('bunnyMarkApp'));
+  beforeEach(module('SpriteMarkApp'));
 
   var element,
     scope;

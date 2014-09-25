@@ -1,6 +1,6 @@
 {
     "jscodehints.detectedExclusions": [
-        "/Users/Ivan/Dev/fun/BunnyMark/server/app.js",
-        "/Users/Ivan/Dev/fun/BunnyMark/karma.conf.js"
+        "/Users/Ivan/Dev/fun/SpriteMark/server/app.js",
+        "/Users/Ivan/Dev/fun/SpriteMark/karma.conf.js"
     ]
 }
