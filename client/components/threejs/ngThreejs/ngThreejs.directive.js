@@ -38,7 +38,75 @@ angular.module('SpriteMarkApp')
           }
 
         }
+        
+        var CircleFactory = function() {
+                    
+          var radius = 2,
+                segments = 64,
+                material = new THREE.LineBasicMaterial({ color: 0xff0000 }),
+                geometry = new THREE.CircleGeometry( radius, segments );
+          
+          // Remove center vertex
+          geometry.vertices.shift();
+          
+          this.makeBunny = function() {
+                        
+            var circle = new THREE.Line(geometry,material);
+            circle.name = 'bunny';
+            
+            if(getRandomInt(0,1) === 0) {
+              circle.userData.goingLeft = false;
+              circle.userData.goingUp = true;
+            } else 
+            if (getRandomInt(0,1) === 1) {
+              circle.userData.goingLeft = true;
+              circle.userData.goingUp = false;
+            }
+            
+            return circle; 
+          }
+        }
+        
+        var AxisFactory = function() {
+          
+          var material = new THREE.LineBasicMaterial({ color: 0x0000FF, linewidth:50 });
+          var x0ffset = 5;
+          var yOffset = 5;
+          
+          //left to right
+          function createXAxis(width){
+            var geo = new THREE.Geometry();
+            geo.vertices.push(new THREE.Vector3(-width,0,0));//start
+            geo.vertices.push(new THREE.Vector3(width,0,0));//end
+            
+            var axis = new THREE.Line(geo,material);
+            
+            return axis;
+          }
+          
+          //bottom to top
+          function createYAxis(height) {
+            var geo = new THREE.Geometry();
+            geo.vertices.push(new THREE.Vector3(0,-height,0));//start
+            geo.vertices.push(new THREE.Vector3(0,height,0));//end
+            
+            var axis = new THREE.Line(geo,material);
+            
+            return axis;
+          }
+          
+          this.createAxis = function(boundingBox){
+            var ob = new THREE.Object3D();
+            
+            ob.add( createXAxis(boundingBox.x) );
+            ob.add( createYAxis(boundingBox.y) );
+            
+            return ob;
+          }
+        }
+        
         var cameraBoundingBox = {}        
+        
         /* parameters */
         var params = {};
         params.debug = attrs.debugMode || 'false';
@@ -52,15 +120,19 @@ angular.module('SpriteMarkApp')
         var clock = new THREE.Clock();
         var speed = 1;
         
-        var bunnyFactory = new BunnyFactory();
+        var bunnyFactory = new CircleFactory();
         var bunnies = [];
         var bunnyInterval;
+        
+        var axisFactory = new AxisFactory();
                  
         
         init();
         animate();
         calcCameraBoundingBox();
-        placeRandomBunnies(1000);
+        //placeRandomBunnies(1000);
+        
+        scene.add(axisFactory.createAxis(cameraBoundingBox));
  
         function init() {
           var width = element.width();
